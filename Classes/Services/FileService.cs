@@ -9,12 +9,10 @@ namespace FlatFileStorage
 {
     public class FileService
     {
-        private readonly ILogger<FileService> _log;
         private readonly AppSettings _config;
         private string OutputFilePath;
-        public FileService(ILogger<FileService> log)
+        public FileService()
         {
-            _log = log;
             var jsonData = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "config.json"));
             AppSettings config = JsonSerializer.Deserialize<AppSettings>(jsonData);
             _config = config;
@@ -38,7 +36,6 @@ namespace FlatFileStorage
             }
             catch (Exception e)
             {
-                _log.LogError(e.Message + Environment.NewLine + e.StackTrace);
                 return false;
             }
             return true;

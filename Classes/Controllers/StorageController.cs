@@ -11,12 +11,10 @@ namespace FlatFileStorage.Controllers
     [Route("[controller]/[Action]")]
     public class StorageController : ControllerBase
     {
-        private readonly ILogger<StorageController> _log;
         private readonly FileService _fileSvc;
 
-        public StorageController(ILogger<StorageController> log, FileService fileService)
+        public StorageController(FileService fileService)
         {
-            _log = log;
             _fileSvc = fileService;
         }
 
