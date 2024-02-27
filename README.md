@@ -3,12 +3,16 @@
 A dead-simple API with two endpoints:
 
 ## GET: Storage/GetAll
+
 Returns the full list of stored items
 
 ## POST: Storage/SaveItem
+
+Save an item to storage
+
 Body:
 
-| Name    | Type |
-| -------- | ------- |
+| Name  | Type     |
+| ----- | -------- |
 | title | _string_ |
-| body | _string_ |
+| body  | _string_ |
