@@ -9,31 +9,33 @@ namespace FlatFileStorage.Controllers
 {
     [ApiController]
     [Route("[controller]/[Action]")]
-    public class StorageController : ControllerBase
+    public class FileController : ControllerBase
     {
         private readonly FileService _fileSvc;
 
-        public StorageController(FileService fileService)
+        public FileController(FileService fileService)
         {
             _fileSvc = fileService;
         }
 
         [HttpGet]
-        public StorageList GetAll()
+        public StorageList GetList(string name)
         {
-            return _fileSvc.ReadFromFile();
+            return _fileSvc.ReadFromFile(name);
         }
-
         [HttpPost]
-        public Item SaveItem(Item item)
+        public bool SaveItem(ItemRequest req)
         {
-            Item response = new Item();
-            if (_fileSvc.WriteToFile(item))
+            if (!_fileSvc.WriteToFile(req))
             {
-                response = item;
+                return false;
             }
-            return response;
+            return true;
         }
-
+        [HttpPost]
+        public bool EditItem(ItemEditRequest req)
+        {
+            return _fileSvc.EditItem(req);
+        }
     }
 }

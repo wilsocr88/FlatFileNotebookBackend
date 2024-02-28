@@ -10,28 +10,34 @@ namespace FlatFileStorage
     public class FileService
     {
         private readonly AppSettings _config;
-        private string OutputFilePath;
+        private string FilePath;
         public FileService()
         {
-            var jsonData = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "config.json"));
-            AppSettings config = JsonSerializer.Deserialize<AppSettings>(jsonData);
-            _config = config;
-            OutputFilePath = Path.Combine(Directory.GetCurrentDirectory(), _config.WorkingDirectory, _config.FileName);
-            if (!File.Exists(OutputFilePath))
+            // Get config
+            var configJson = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "config.json"));
+            _config = JsonSerializer.Deserialize<AppSettings>(configJson);
+
+            // Working directory
+            FilePath = Path.Combine(Directory.GetCurrentDirectory(), _config.WorkingDirectory);
+            if (!Directory.Exists(FilePath))
             {
-                File.Create(OutputFilePath);
+                Directory.CreateDirectory(FilePath);
             }
         }
-        public bool WriteToFile(Item item)
+        public bool WriteToFile(ItemRequest req)
         {
-            StorageList storageList = ReadFromFile();
-            storageList.items.Add(item);
-            string json = JsonSerializer.Serialize(storageList);
+            // Get file (or new empty set)
+            StorageList storageList = ReadFromFile(req.file);
+            // Add item
+            storageList.items.Add(new Item() { title = req.title, body = req.body });
             try
             {
-                using (StreamWriter outputFile = new StreamWriter(OutputFilePath))
+                // Send to file
+                string json = JsonSerializer.Serialize(storageList);
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, req.file)))
                 {
                     outputFile.Write(json);
+                    outputFile.Close();
                 }
             }
             catch (Exception e)
@@ -40,18 +46,67 @@ namespace FlatFileStorage
             }
             return true;
         }
-
-        public StorageList ReadFromFile()
+        public bool EditItem(ItemEditRequest req)
         {
-            StorageList response = new StorageList();
+            // Get file (or new empty set)
+            StorageList storageList = ReadFromFile(req.file);
+            storageList.items[req.index] = new Item() { title = req.title, body = req.body };
             try
             {
-                string text = File.ReadAllText(OutputFilePath);
-                response = JsonSerializer.Deserialize<StorageList>(text);
+                // Send to file
+                string json = JsonSerializer.Serialize(storageList);
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, req.file)))
+                {
+                    outputFile.Write(json);
+                    outputFile.Close();
+                }
             }
-            catch (System.Exception e)
-            { }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+        /**
+         * Get contents of file, or return a new empty set
+         */
+        public StorageList ReadFromFile(string name)
+        {
+            StorageList response = new StorageList();
+            if (CreateFile(Path.Combine(FilePath, name)))
+                // If we just created the file new, return an empty set
+                return response;
+
+            // File already existed, parse its contents
+            string text = File.ReadAllText(Path.Combine(FilePath, name));
+            // If it was empty, return an empty set
+            if (string.IsNullOrEmpty(text)) return response;
+            response = JsonSerializer.Deserialize<StorageList>(text);
             return response;
+        }
+        /**
+         * Creates file at given string path and returns true.
+         * If file already exists, returns false
+         */
+        private bool CreateFile(string path)
+        {
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    File.Create(path);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
