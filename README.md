@@ -29,6 +29,8 @@ Body:
 
 ## POST: File/EditItem
 
+Edit a specific item id in a specific file
+
 Body:
 
 | Name  | Type   | Description                             |
@@ -37,3 +39,18 @@ Body:
 | file  | string | Name of file we're editing an item in   |
 | title | string | Edited title of item                    |
 | body  | string | Edited body of item                     |
+
+## DELETE: File/DeleteItem
+
+Delete an item in a file
+
+Body:
+
+| Name  | Type   | Description                      |
+| ----- | ------ | -------------------------------- |
+| index | int    | Index of item we're deleting     |
+| file  | string | Name of file we're deleting from |
+
+## DELETE: File/DeleteList?name=filenamehere
+
+Delete entire list/file

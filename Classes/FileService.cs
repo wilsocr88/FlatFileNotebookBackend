@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ namespace FlatFileStorage
                     outputFile.Close();
                 }
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
@@ -61,7 +62,35 @@ namespace FlatFileStorage
                     outputFile.Close();
                 }
             }
-            catch (Exception e)
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+        public bool RemoveItem(ItemDeleteRequest req)
+        {
+            // Get file (or new empty set)
+            StorageList storageList = ReadFromFile(req.file);
+            if (storageList.items.ElementAtOrDefault(req.id) != null)
+            {
+                storageList.items.RemoveAt(req.id);
+                try
+                {
+                    // Send to file
+                    string json = JsonSerializer.Serialize(storageList);
+                    using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, req.file)))
+                    {
+                        outputFile.Write(json);
+                        outputFile.Close();
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else
             {
                 return false;
             }
@@ -121,6 +150,26 @@ namespace FlatFileStorage
                 response.files.Add(fileName);
             }
             return response;
+        }
+        public bool DeleteFile(string name)
+        {
+            try
+            {
+                string path = Path.Combine(FilePath, name);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

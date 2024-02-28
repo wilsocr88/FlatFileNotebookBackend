@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -47,6 +46,17 @@ namespace FlatFileStorage.Controllers
         public bool EditItem(ItemEditRequest req)
         {
             return _fileSvc.EditItem(req);
+        }
+
+        [HttpDelete]
+        public bool DeleteItem(ItemDeleteRequest req)
+        {
+            return _fileSvc.RemoveItem(req);
+        }
+        [HttpDelete]
+        public bool DeleteList(string name)
+        {
+            return _fileSvc.DeleteFile(name);
         }
     }
 }
