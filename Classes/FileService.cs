@@ -73,7 +73,7 @@ namespace FlatFileStorage
         public StorageList ReadFromFile(string name)
         {
             StorageList response = new StorageList();
-            if (CreateFile(Path.Combine(FilePath, name)))
+            if (CreateFile(name))
                 // If we just created the file new, return an empty set
                 return response;
 
@@ -88,13 +88,15 @@ namespace FlatFileStorage
          * Creates file at given string path and returns true.
          * If file already exists, returns false
          */
-        private bool CreateFile(string path)
+        public bool CreateFile(string name)
         {
+            string path = Path.Combine(FilePath, name);
             try
             {
                 if (!File.Exists(path))
                 {
-                    File.Create(path);
+                    var file = File.Create(path);
+                    file.Close();
                     return true;
                 }
                 else
