@@ -28,6 +28,12 @@ namespace FlatFileStorage.Controllers
         {
             return _fileSvc.CreateFile(name);
         }
+        [HttpGet]
+        public FileList ListFiles()
+        {
+            return _fileSvc.ListFiles();
+        }
+
         [HttpPost]
         public bool SaveItem(ItemRequest req)
         {

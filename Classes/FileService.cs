@@ -110,5 +110,17 @@ namespace FlatFileStorage
                 return false;
             }
         }
+        public FileList ListFiles()
+        {
+            FileList response = new FileList();
+            string[] files = Directory.GetFiles(FilePath);
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                if (fileName[0].Equals('.')) continue;
+                response.files.Add(fileName);
+            }
+            return response;
+        }
     }
 }

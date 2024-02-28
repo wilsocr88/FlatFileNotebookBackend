@@ -10,6 +10,11 @@ Returns the full list of stored items in given file
 
 Creates a new file with given name
 
+## GET: File/ListFiles
+
+List all files that currently exist.
+Skip any files that start with a dot `.` character.
+
 ## POST: File/SaveItem
 
 Save an item to storage
