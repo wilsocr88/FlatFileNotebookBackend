@@ -1,10 +1,14 @@
 # Flat File Storage API
 
-A dead-simple API with three endpoints:
+A dead-simple API for storage of small notes in flat files.
 
 ## GET: File/GetList?name=filenamehere
 
 Returns the full list of stored items in given file
+
+## GET: File/CreateList?name=filenamehere
+
+Creates a new file with given name
 
 ## POST: File/SaveItem
 
