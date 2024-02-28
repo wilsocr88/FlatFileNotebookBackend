@@ -50,7 +50,7 @@ namespace FlatFileStorage
         {
             // Get file (or new empty set)
             StorageList storageList = ReadFromFile(req.file);
-            storageList.items[req.index] = new Item() { title = req.title, body = req.body };
+            storageList.items[req.id] = new Item() { title = req.title, body = req.body };
             try
             {
                 // Send to file

@@ -4,6 +4,6 @@ namespace FlatFileStorage
 {
     public class ItemEditRequest : ItemRequest
     {
-        public int index { get; set; }
+        public int id { get; set; }
     }
 }
