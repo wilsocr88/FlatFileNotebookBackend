@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "8710fa35-a164-4cd2-9b34-16df78dfed86",
+		"name": "FlatFileStorage",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "700882"
+	},
+	"item": [
+		{
+			"name": "GetList",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"index\": 1,\r\n    \"file\": \"personal\",\r\n    \"title\": \"AAAA!?\",\r\n    \"body\": \"# Bills bills bills!!!!!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/File/GetList?name=foo",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"File",
+						"GetList"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "foo"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateList",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"index\": 1,\r\n    \"file\": \"personal\",\r\n    \"title\": \"AAAA!?\",\r\n    \"body\": \"# Bills bills bills!!!!!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/File/CreateList?name=foo",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"File",
+						"CreateList"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "foo"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SaveItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"file\": \"personal\",\r\n    \"title\": \"New title\",\r\n    \"body\": \"New body\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/File/SaveItem",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"File",
+						"SaveItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EditItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"file\": \"personal\",\r\n    \"title\": \"Edited title\",\r\n    \"body\": \"Edited body\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/File/EditItem",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"File",
+						"EditItem"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
