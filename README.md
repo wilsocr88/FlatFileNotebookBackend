@@ -35,7 +35,7 @@ Body:
 
 | Name  | Type   | Description                             |
 | ----- | ------ | --------------------------------------- |
-| index | int    | Index of item we're editing in the list |
+| id    | int    | Index of item we're editing in the list |
 | file  | string | Name of file we're editing an item in   |
 | title | string | Edited title of item                    |
 | body  | string | Edited body of item                     |
@@ -46,10 +46,10 @@ Delete an item in a file
 
 Body:
 
-| Name  | Type   | Description                      |
-| ----- | ------ | -------------------------------- |
-| index | int    | Index of item we're deleting     |
-| file  | string | Name of file we're deleting from |
+| Name | Type   | Description                      |
+| ---- | ------ | -------------------------------- |
+| id   | int    | Index of item we're deleting     |
+| file | string | Name of file we're deleting from |
 
 ## DELETE: File/DeleteList?name=filenamehere
 
