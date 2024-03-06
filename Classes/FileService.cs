@@ -146,7 +146,7 @@ namespace FlatFileStorage
             foreach (string file in files)
             {
                 string fileName = Path.GetFileName(file);
-                if (fileName[0].Equals('.')) continue;
+                if (fileName[0].Equals('.') || fileName.Equals("null")) continue;
                 response.files.Add(fileName);
             }
             return response;
