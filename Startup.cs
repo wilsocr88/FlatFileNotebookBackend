@@ -26,10 +26,7 @@ namespace FlatFileStorage
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o => o.AddPolicy("AppCORSPolicy", builder =>
-            {
-                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-            }));
+            services.AddCors();
             services.AddControllers();
 
             // Adding services
@@ -44,7 +41,8 @@ namespace FlatFileStorage
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            app.UseHttpsRedirection();
             app.UseRouting();
             //app.UseAuthorization();
             app.UseEndpoints(endpoints =>
