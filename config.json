@@ -1,3 +1,6 @@
 {
-    "WorkingDirectory": "storage"
+    "WorkingDirectory": "storage",
+    "UsersTable": "users",
+    "DefaultEmail": "admin@example.com",
+    "DefaultPassword": "Vk64CcXAdkeEbnXFhbfc"
 }

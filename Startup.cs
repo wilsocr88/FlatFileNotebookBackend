@@ -34,7 +34,8 @@ namespace FlatFileStorage
 
             // Add services
             services.AddOptions()
-                .AddTransient<FileService>();
+                .AddTransient<FileService>()
+                .AddTransient<AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,8 +47,9 @@ namespace FlatFileStorage
             }
 
             app.UseCors("AppCORSPolicy");
-            //app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthorization();
+            //app.UseHttpsRedirection();
             //app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
