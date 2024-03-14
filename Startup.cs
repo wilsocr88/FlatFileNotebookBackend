@@ -1,21 +1,25 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
+using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FlatFileStorage
 {
     public class Startup
     {
+        private SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ji9qNQ94nHYfoOekjhyhsO8376hGF6bh"));
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,6 +36,33 @@ namespace FlatFileStorage
             }));
             services.AddControllers();
 
+            services.AddAuthentication()
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = key
+                    };
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes("Bearer")
+                    .Build();
+                options.AddPolicy("Bearer", options =>
+                {
+                    options.RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes("Bearer")
+                        .Build();
+                });
+            });
+
             // Add services
             services.AddOptions()
                 .AddTransient<FileService>()
@@ -46,11 +77,11 @@ namespace FlatFileStorage
                 app.UseDeveloperExceptionPage();
             }
 
+            //app.UseHttpsRedirection();
             app.UseCors("AppCORSPolicy");
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseHttpsRedirection();
-            //app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

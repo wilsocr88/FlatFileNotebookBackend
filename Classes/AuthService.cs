@@ -7,17 +7,19 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace FlatFileStorage
 {
     public class AuthService
     {
+        private SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ji9qNQ94nHYfoOekjhyhsO8376hGF6bh"));
         private readonly AppSettings _config;
         private readonly UserList _users;
         private readonly FileService _fileSvc;
         private string FilePath;
-        private SecurityKey keyToUse { get; set; }
         public AuthService(FileService fileService)
         {
             _fileSvc = fileService;
@@ -65,11 +67,10 @@ namespace FlatFileStorage
         public LoginResponse Login(LoginRequest req, string authURI)
         {
             LoginResponse res = new LoginResponse();
-            string token = "";
             if (CheckPassword(req.user, req.pass))
             {
                 res.success = true;
-                res.token = GenerateTokenForUser(user, authURI);
+                res.token = GenerateTokenForUser(req.user, authURI);
             }
             return res;
         }
@@ -91,8 +92,7 @@ namespace FlatFileStorage
         public string GenerateTokenForUser(string user, string authURI)
         {
             string token = "";
-
-            SigningCredentials signingCreds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("s4k6H29gQy4nM8snA376KnbdiIhHAodgyNt78")),
+            SigningCredentials signingCreds = new SigningCredentials(key,
                 SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);
             ClaimsIdentity claimsID = new ClaimsIdentity(new List<Claim>()
             {
@@ -104,7 +104,7 @@ namespace FlatFileStorage
                 Subject = claimsID,
                 SigningCredentials = signingCreds,
                 Audience = authURI,
-                Issuer = "GCU"
+                Issuer = "MisterDizzy"
             };
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
@@ -140,7 +140,7 @@ namespace FlatFileStorage
         public UserList ReadUsers()
         {
             UserList response = new UserList();
-            if (_fileSvc.CreateFile(_config.UsersTable))
+            if (CreateUserFile())
                 // If we just created the file new, return an empty set
                 return response;
 
@@ -150,6 +150,56 @@ namespace FlatFileStorage
             if (string.IsNullOrEmpty(text)) return response;
             response = JsonSerializer.Deserialize<UserList>(text);
             return response;
+        }
+        private bool CreateUserFile()
+        {
+            string path = Path.Combine(FilePath, _config.UsersTable);
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    var file = File.Create(path);
+                    file.Close();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool CreateUser(LoginRequest req)
+        {
+            string salt = GenerateSalt();
+            UserList users = ReadUsers();
+            User checkUser = users.users.Find(u => u.email == req.user);
+            if (!object.Equals(checkUser, default(User)))
+            {
+                return false;
+            }
+            return WriteUser(new User()
+            {
+                email = req.user,
+                salt = salt,
+                hashedPassword = HashPassword(req.pass, salt)
+            });
+        }
+
+        public bool CheckAuth(string user)
+        {
+            LoginResponse response = new LoginResponse();
+            UserList users = ReadUsers();
+            User checkUser = users.users.Find(u => u.email == user);
+            if (object.Equals(checkUser, default(User)))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

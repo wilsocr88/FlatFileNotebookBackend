@@ -7,6 +7,7 @@ namespace FlatFileStorage
         public string token { get; set; }
         public LoginResponse()
         {
+            token = "";
             success = false;
         }
     }

@@ -25,17 +25,17 @@ namespace FlatFileStorage
                 Directory.CreateDirectory(FilePath);
             }
         }
-        public bool WriteToFile(ItemRequest req)
+        public bool WriteToFile(string user, ItemRequest req)
         {
             // Get file (or new empty set)
-            StorageList storageList = ReadFromFile(req.file);
+            StorageList storageList = ReadFromFile(user, req.file);
             // Add item
             storageList.items.Add(new Item() { title = req.title, body = req.body });
             try
             {
                 // Send to file
                 string json = JsonSerializer.Serialize(storageList);
-                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, req.file)))
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, req.file)))
                 {
                     outputFile.Write(json);
                     outputFile.Close();
@@ -47,16 +47,16 @@ namespace FlatFileStorage
             }
             return true;
         }
-        public bool EditItem(ItemEditRequest req)
+        public bool EditItem(string user, ItemEditRequest req)
         {
             // Get file (or new empty set)
-            StorageList storageList = ReadFromFile(req.file);
+            StorageList storageList = ReadFromFile(user, req.file);
             storageList.items[req.id] = new Item() { title = req.title, body = req.body };
             try
             {
                 // Send to file
                 string json = JsonSerializer.Serialize(storageList);
-                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, req.file)))
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, req.file)))
                 {
                     outputFile.Write(json);
                     outputFile.Close();
@@ -68,10 +68,10 @@ namespace FlatFileStorage
             }
             return true;
         }
-        public bool RemoveItem(ItemDeleteRequest req)
+        public bool RemoveItem(string user, ItemDeleteRequest req)
         {
             // Get file (or new empty set)
-            StorageList storageList = ReadFromFile(req.file);
+            StorageList storageList = ReadFromFile(user, req.file);
             if (storageList.items.ElementAtOrDefault(req.id) != null)
             {
                 storageList.items.RemoveAt(req.id);
@@ -79,7 +79,7 @@ namespace FlatFileStorage
                 {
                     // Send to file
                     string json = JsonSerializer.Serialize(storageList);
-                    using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, req.file)))
+                    using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, req.file)))
                     {
                         outputFile.Write(json);
                         outputFile.Close();
@@ -99,15 +99,15 @@ namespace FlatFileStorage
         /**
          * Get contents of file, or return a new empty set
          */
-        public StorageList ReadFromFile(string name)
+        public StorageList ReadFromFile(string user, string name)
         {
             StorageList response = new StorageList();
-            if (CreateFile(name))
+            if (CreateFile(user, name))
                 // If we just created the file new, return an empty set
                 return response;
 
             // File already existed, parse its contents
-            string text = File.ReadAllText(Path.Combine(FilePath, name));
+            string text = File.ReadAllText(Path.Combine(FilePath, user, name));
             // If it was empty, return an empty set
             if (string.IsNullOrEmpty(text)) return response;
             response = JsonSerializer.Deserialize<StorageList>(text);
@@ -117,9 +117,9 @@ namespace FlatFileStorage
          * Creates file at given string path and returns true.
          * If file already exists, returns false
          */
-        public bool CreateFile(string name)
+        public bool CreateFile(string user, string name)
         {
-            string path = Path.Combine(FilePath, name);
+            string path = Path.Combine(FilePath, user, name);
             try
             {
                 if (!File.Exists(path))
@@ -139,10 +139,15 @@ namespace FlatFileStorage
                 return false;
             }
         }
-        public FileList ListFiles()
+        public FileList ListFiles(string user)
         {
             FileList response = new FileList();
-            string[] files = Directory.GetFiles(FilePath);
+            var path = Path.Combine(FilePath, user);
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string[] files = Directory.GetFiles(path);
             foreach (string file in files)
             {
                 string fileName = Path.GetFileName(file);
@@ -151,11 +156,11 @@ namespace FlatFileStorage
             }
             return response;
         }
-        public bool DeleteFile(string name)
+        public bool DeleteFile(string user, string name)
         {
             try
             {
-                string path = Path.Combine(FilePath, name);
+                string path = Path.Combine(FilePath, user, name);
                 if (File.Exists(path))
                 {
                     File.Delete(path);
