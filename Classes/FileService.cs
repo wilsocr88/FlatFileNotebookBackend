@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -31,42 +32,24 @@ namespace FlatFileStorage
             StorageList storageList = ReadFromFile(user, req.file);
             // Add item
             storageList.items.Add(new Item() { title = req.title, body = req.body });
-            try
-            {
-                // Send to file
-                string json = JsonSerializer.Serialize(storageList);
-                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, req.file)))
-                {
-                    outputFile.Write(json);
-                    outputFile.Close();
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            return SendToFile(storageList, user, req.file);
         }
         public bool EditItem(string user, ItemEditRequest req)
         {
             // Get file (or new empty set)
             StorageList storageList = ReadFromFile(user, req.file);
             storageList.items[req.id] = new Item() { title = req.title, body = req.body };
-            try
-            {
-                // Send to file
-                string json = JsonSerializer.Serialize(storageList);
-                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, req.file)))
-                {
-                    outputFile.Write(json);
-                    outputFile.Close();
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            return SendToFile(storageList, user, req.file);
+        }
+        public bool ReorderItem(string user, ReorderRequest req)
+        {
+            if (req.currentPos == req.newPos) return true;
+            StorageList storageList = ReadFromFile(user, req.file);
+            if (storageList.items.Count == 0) return false;
+            ObservableCollection<Item> storageListItems = new ObservableCollection<Item>(storageList.items);
+            storageListItems.Move(req.currentPos, req.newPos);
+            storageList.items = storageListItems.ToList();
+            return SendToFile(storageList, user, req.file);
         }
         public bool RemoveItem(string user, ItemDeleteRequest req)
         {
@@ -75,26 +58,12 @@ namespace FlatFileStorage
             if (storageList.items.ElementAtOrDefault(req.id) != null)
             {
                 storageList.items.RemoveAt(req.id);
-                try
-                {
-                    // Send to file
-                    string json = JsonSerializer.Serialize(storageList);
-                    using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, req.file)))
-                    {
-                        outputFile.Write(json);
-                        outputFile.Close();
-                    }
-                }
-                catch
-                {
-                    return false;
-                }
+                return SendToFile(storageList, user, req.file);
             }
             else
             {
                 return false;
             }
-            return true;
         }
         /**
          * Get contents of file, or return a new empty set
@@ -168,6 +137,24 @@ namespace FlatFileStorage
                 else
                 {
                     return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+        private bool SendToFile(StorageList storageList, string user, string file)
+        {
+            try
+            {
+                // Send to file
+                string json = JsonSerializer.Serialize(storageList);
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(FilePath, user, file)))
+                {
+                    outputFile.Write(json);
+                    outputFile.Close();
                 }
             }
             catch

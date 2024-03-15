@@ -53,6 +53,12 @@ namespace FlatFileStorage.Controllers
         {
             return _fileSvc.EditItem(Request.HttpContext.User.Identity.Name, req);
         }
+        [HttpPost]
+        [Authorize(Policy = "Bearer")]
+        public bool ReorderItem(ReorderRequest req)
+        {
+            return _fileSvc.ReorderItem(Request.HttpContext.User.Identity.Name, req);
+        }
 
         [HttpDelete]
         [Authorize(Policy = "Bearer")]
