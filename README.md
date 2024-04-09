@@ -1,6 +1,8 @@
-# Flat File Storage API
+# Flat File Notebook Backend
 
-A dead-simple API for storage of small notes in flat files.
+## Use
+
+Click login once to create default account using the credentials from `config.json`.
 
 ## GET: File/GetList?name=filenamehere
 
