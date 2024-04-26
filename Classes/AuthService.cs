@@ -7,23 +7,18 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace FlatFileStorage
 {
     public class AuthService
     {
-        private SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ji9qNQ94nHYfoOekjhyhsO8376hGF6bh"));
+        private readonly SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ji9qNQ94nHYfoOekjhyhsO8376hGF6bh"));
         private readonly AppSettings _config;
         private readonly UserList _users;
-        private readonly FileService _fileSvc;
-        private string FilePath;
+        private readonly string FilePath;
         public AuthService(FileService fileService)
         {
-            _fileSvc = fileService;
-
             // Get config
             var configJson = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "config.json"));
             _config = JsonSerializer.Deserialize<AppSettings>(configJson);
@@ -32,14 +27,14 @@ namespace FlatFileStorage
             FilePath = Path.Combine(Directory.GetCurrentDirectory(), _config.WorkingDirectory);
 
             _users = ReadUsers();
-            if (_users.users.Count == 0)
+            if (_users.Users.Count == 0)
             {
                 string salt = GenerateSalt();
                 WriteUser(new User()
                 {
-                    email = _config.DefaultEmail,
-                    salt = salt,
-                    hashedPassword = HashPassword(_config.DefaultPassword, salt)
+                    Email = _config.DefaultEmail,
+                    Salt = salt,
+                    HashedPassword = HashPassword(_config.DefaultPassword, salt)
                 });
             }
         }
@@ -67,23 +62,23 @@ namespace FlatFileStorage
         public LoginResponse Login(LoginRequest req, string authURI)
         {
             LoginResponse res = new LoginResponse();
-            if (CheckPassword(req.user, req.pass))
+            if (CheckPassword(req.User, req.Pass))
             {
-                res.success = true;
-                res.token = GenerateTokenForUser(req.user, authURI);
+                res.Success = true;
+                res.Token = GenerateTokenForUser(req.User, authURI);
             }
             return res;
         }
         public bool CheckPassword(string email, string pass)
         {
             UserList users = ReadUsers();
-            User user = users.users.Find(u => u.email == email);
+            User user = users.Users.Find(u => u.Email == email);
             if (object.Equals(user, default(User)))
             {
                 return false;
             }
-            string hashedPasswordAttempt = HashPassword(pass, user.salt);
-            if (hashedPasswordAttempt != user.hashedPassword)
+            string hashedPasswordAttempt = HashPassword(pass, user.Salt);
+            if (hashedPasswordAttempt != user.HashedPassword)
             {
                 return false;
             }
@@ -117,7 +112,7 @@ namespace FlatFileStorage
             // Get file (or new empty set)
             UserList userList = ReadUsers();
             // Add item
-            userList.users.Add(user);
+            userList.Users.Add(user);
             try
             {
                 // Send to file
@@ -177,16 +172,16 @@ namespace FlatFileStorage
         {
             string salt = GenerateSalt();
             UserList users = ReadUsers();
-            User checkUser = users.users.Find(u => u.email == req.user);
-            if (!object.Equals(checkUser, default(User)))
+            User checkUser = users.Users.Find(u => u.Email == req.User);
+            if (!Equals(checkUser, default(User)))
             {
                 return false;
             }
             return WriteUser(new User()
             {
-                email = req.user,
-                salt = salt,
-                hashedPassword = HashPassword(req.pass, salt)
+                Email = req.User,
+                Salt = salt,
+                HashedPassword = HashPassword(req.Pass, salt)
             });
         }
 
@@ -194,8 +189,8 @@ namespace FlatFileStorage
         {
             LoginResponse response = new LoginResponse();
             UserList users = ReadUsers();
-            User checkUser = users.users.Find(u => u.email == user);
-            if (object.Equals(checkUser, default(User)))
+            User checkUser = users.Users.Find(u => u.Email == user);
+            if (Equals(checkUser, default(User)))
             {
                 return false;
             }

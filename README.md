@@ -29,9 +29,9 @@ Body:
 
 | Name  | Type   | Description                      |
 | ----- | ------ | -------------------------------- |
-| file  | string | Name of file to save new item in |
-| title | string | Title of new item                |
-| body  | string | Body of new item                 |
+| File  | string | Name of file to save new item in |
+| Title | string | Title of new item                |
+| Body  | string | Body of new item                 |
 
 ### POST: File/EditItem
 
@@ -41,10 +41,10 @@ Body:
 
 | Name  | Type   | Description                             |
 | ----- | ------ | --------------------------------------- |
-| id    | int    | Index of item we're editing in the list |
-| file  | string | Name of file we're editing an item in   |
-| title | string | Edited title of item                    |
-| body  | string | Edited body of item                     |
+| Id    | int    | Index of item we're editing in the list |
+| File  | string | Name of file we're editing an item in   |
+| Title | string | Edited title of item                    |
+| Body  | string | Edited body of item                     |
 
 ### POST: File/ReorderItem
 
@@ -54,9 +54,9 @@ Body:
 
 | Name       | Type   | Description                                         |
 | ---------- | ------ | --------------------------------------------------- |
-| file       | string | Name of file we're reordering in                    |
-| currentPos | int    | Current (old) position of the item we're reordering |
-| newPos     | int    | New position of the item                            |
+| File       | string | Name of file we're reordering in                    |
+| CurrentPos | int    | Current (old) position of the item we're reordering |
+| NewPos     | int    | New position of the item                            |
 
 ### DELETE: File/DeleteItem
 
@@ -66,8 +66,8 @@ Body:
 
 | Name | Type   | Description                      |
 | ---- | ------ | -------------------------------- |
-| id   | int    | Index of item we're deleting     |
-| file | string | Name of file we're deleting from |
+| Id   | int    | Index of item we're deleting     |
+| File | string | Name of file we're deleting from |
 
 ### DELETE: File/DeleteList?name=filenamehere
 
@@ -87,8 +87,8 @@ Body:
 
 | Name | Type   | Description |
 | ---- | ------ | ----------- |
-| user | string | Username    |
-| pass | string | Password    |
+| User | string | Username    |
+| Pass | string | Password    |
 
 ### POST: Auth/CreateUser
 
@@ -98,5 +98,5 @@ Body:
 
 | Name | Type   | Description |
 | ---- | ------ | ----------- |
-| user | string | Username    |
-| pass | string | Password    |
+| User | string | Username    |
+| Pass | string | Password    |

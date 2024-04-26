@@ -1,10 +1,8 @@
-using System;
-
 namespace FlatFileStorage
 {
     public class LoginRequest
     {
-        public string user { get; set; }
-        public string pass { get; set; }
+        public string User { get; set; }
+        public string Pass { get; set; }
     }
 }

@@ -1,7 +1,10 @@
-public class AppSettings
+namespace FlatFileStorage
 {
-    public string WorkingDirectory { get; set; }
-    public string UsersTable { get; set; }
-    public string DefaultEmail { get; set; }
-    public string DefaultPassword { get; set; }
+    public class AppSettings
+    {
+        public string WorkingDirectory { get; set; }
+        public string UsersTable { get; set; }
+        public string DefaultEmail { get; set; }
+        public string DefaultPassword { get; set; }
+    }
 }

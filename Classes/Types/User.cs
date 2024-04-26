@@ -1,11 +1,9 @@
-using System;
-
 namespace FlatFileStorage
 {
     public class User
     {
-        public string email { get; set; }
-        public string salt { get; set; }
-        public string hashedPassword { get; set; }
+        public string Email { get; set; }
+        public string Salt { get; set; }
+        public string HashedPassword { get; set; }
     }
 }

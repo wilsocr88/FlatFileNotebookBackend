@@ -1,11 +1,7 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace FlatFileStorage
 {
@@ -29,36 +25,36 @@ namespace FlatFileStorage
         public bool WriteToFile(string user, ItemRequest req)
         {
             // Get file (or new empty set)
-            StorageList storageList = ReadFromFile(user, req.file);
+            StorageList storageList = ReadFromFile(user, req.File);
             // Add item
-            storageList.items.Add(new Item() { title = req.title, body = req.body });
-            return SendToFile(storageList, user, req.file);
+            storageList.Items.Add(new Item() { Title = req.Title, Body = req.Body });
+            return SendToFile(storageList, user, req.File);
         }
         public bool EditItem(string user, ItemEditRequest req)
         {
             // Get file (or new empty set)
-            StorageList storageList = ReadFromFile(user, req.file);
-            storageList.items[req.id] = new Item() { title = req.title, body = req.body };
-            return SendToFile(storageList, user, req.file);
+            StorageList storageList = ReadFromFile(user, req.File);
+            storageList.Items[req.Id] = new Item() { Title = req.Title, Body = req.Body };
+            return SendToFile(storageList, user, req.File);
         }
         public bool ReorderItem(string user, ReorderRequest req)
         {
-            if (req.currentPos == req.newPos) return true;
-            StorageList storageList = ReadFromFile(user, req.file);
-            if (storageList.items.Count == 0) return false;
-            ObservableCollection<Item> storageListItems = new ObservableCollection<Item>(storageList.items);
-            storageListItems.Move(req.currentPos, req.newPos);
-            storageList.items = storageListItems.ToList();
-            return SendToFile(storageList, user, req.file);
+            if (req.CurrentPos == req.NewPos) return true;
+            StorageList storageList = ReadFromFile(user, req.File);
+            if (storageList.Items.Count == 0) return false;
+            ObservableCollection<Item> storageListItems = new ObservableCollection<Item>(storageList.Items);
+            storageListItems.Move(req.CurrentPos, req.NewPos);
+            storageList.Items = storageListItems.ToList();
+            return SendToFile(storageList, user, req.File);
         }
         public bool RemoveItem(string user, ItemDeleteRequest req)
         {
             // Get file (or new empty set)
-            StorageList storageList = ReadFromFile(user, req.file);
-            if (storageList.items.ElementAtOrDefault(req.id) != null)
+            StorageList storageList = ReadFromFile(user, req.File);
+            if (storageList.Items.ElementAtOrDefault(req.Id) != null)
             {
-                storageList.items.RemoveAt(req.id);
-                return SendToFile(storageList, user, req.file);
+                storageList.Items.RemoveAt(req.Id);
+                return SendToFile(storageList, user, req.File);
             }
             else
             {
@@ -121,7 +117,7 @@ namespace FlatFileStorage
             {
                 string fileName = Path.GetFileName(file);
                 if (fileName[0].Equals('.') || fileName.Equals("null")) continue;
-                response.files.Add(fileName);
+                response.Files.Add(fileName);
             }
             return response;
         }

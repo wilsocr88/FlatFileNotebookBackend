@@ -1,10 +1,8 @@
-using System;
-
 namespace FlatFileStorage
 {
     public class ItemDeleteRequest
     {
-        public int id { get; set; }
-        public string file { get; set; }
+        public int Id { get; set; }
+        public string File { get; set; }
     }
 }

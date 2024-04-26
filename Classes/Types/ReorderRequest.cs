@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-
 namespace FlatFileStorage
 {
     public class ReorderRequest
     {
-        public string file { get; set; }
-        public int currentPos { get; set; }
-        public int newPos { get; set; }
+        public string File { get; set; }
+        public int CurrentPos { get; set; }
+        public int NewPos { get; set; }
         public ReorderRequest()
         {
         }
