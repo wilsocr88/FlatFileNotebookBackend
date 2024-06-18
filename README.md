@@ -1,5 +1,7 @@
 # Flat File Notebook Backend
 
+Backend for [Flat File Notebook Frontend](https://github.com/wilsocr88/FlatFileNotebookFrontend).
+
 ## Use
 
 Click `login` on the front end once (i.e., call the Auth/Login endpoint) to create a default account using the credentials from `config.json`.
