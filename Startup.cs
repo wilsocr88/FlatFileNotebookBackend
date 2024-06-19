@@ -1,31 +1,19 @@
-using System;
-using System.IO;
 using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FlatFileStorage
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
-        private SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ji9qNQ94nHYfoOekjhyhsO8376hGF6bh"));
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ji9qNQ94nHYfoOekjhyhsO8376hGF6bh"));
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; } = configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -66,7 +54,8 @@ namespace FlatFileStorage
             // Add services
             services.AddOptions()
                 .AddTransient<FileService>()
-                .AddTransient<AuthService>();
+                .AddTransient<AuthService>()
+                .AddTransient<StorageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
