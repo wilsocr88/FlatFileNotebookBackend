@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "requireExactSource": false,
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/FlatFileStorage.dll",
+            "program": "${workspaceFolder}/bin/Debug/net8.0/FlatFileStorage.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
